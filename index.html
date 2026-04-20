@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FMES Classroom Requests</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f4f4f4;
+  }
+  h2 {
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    h2 {
+      text-align: left;
+      margin-top: 15px;
+      padding-left: 50px;
+    }
+  }
+
+  label {
+    font-weight: bold;
+    margin-top: 15px;
+    display: block;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    margin-top: 5px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+
+  .item-block {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+  }
+
+  .row-2col {
+    display: flex;
+    gap: 10px;
+  }
+
+  .row-2col input {
+    width: 100%;
+  }
+
+  .remove-btn {
+    background: #b30000;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  #addItemBtn, #submitBtn {
+    width: 100%;
+    padding: 16px;
+    font-size: 20px;
+    margin-top: 25px;
+    border: none;
+    border-radius: 8px;
+  }
+
+  #addItemBtn {
+    background: #444;
+    color: white;
+  }
+
+  #submitBtn {
+    background: #0078d4;
+    color: white;
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  #submitBtn:disabled {
+    background: #0078d4;
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .header-logo {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  .header-logo img {
+    height: 90px;
+    width: auto;
+  }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+(function() {
+  emailjs.init("9Oy_yjfgv48qihRMN");
+})();
+</script>
+
+</head>
+<body>
+
+<div class="header-logo">
+  <img src="Final Mick Face (Hat+Wildcats+Black Outline).png" alt="FMES Logo">
+</div>
+
+<h2>FMES Classroom Request Form</h2>
+
+<label>Class/Organization</label>
+<select id="classSelect">
+  <option value="" disabled selected hidden>Select Class/Organization</option>
+  <option>Pre-K</option>
+  <option>Kinder</option>
+  <option>1st</option>
+  <option>2nd</option>
+  <option>3rd</option>
+  <option>4th</option>
+  <option>5th</option>
+  <option>Para</option>
+  <option>Speech</option>
+  <option>ESOL</option>
+</select>
+
+<form id="requestForm" autocomplete="off"></form>
+
+<button id="addItemBtn">Add Item</button>
+<button id="submitBtn" disabled>Submit Request</button>
+
+<script>
+const maxItems = 19;
+let itemCount = 0;
+
+function createItemBlock() {
+  if (itemCount >= maxItems) return;
+  itemCount++;
+
+  const block = document.createElement("div");
+  block.className = "item-block";
+
+  block.innerHTML = `
+    <label>Request Type</label>
+    <input type="text" value="Custom Classroom Request" readonly>
+
+    <label>Description</label>
+    <input type="text" class="descField" placeholder="Enter item description">
+
+    <label>Vendor</label>
+    <input type="text" class="vendorField" placeholder="Enter vendor name">
+
+    <label>URL/Link</label>
+    <input type="text" class="urlField" placeholder="Enter link to item">
+
+    <div class="row-2col">
+      <div>
+        <label>Quantity</label>
+        <input type="number" class="qtyField" min="1">
+      </div>
+      <div>
+        <label>Price</label>
+        <input type="text" class="priceField" placeholder="Price per Item">
+      </div>
+    </div>
+
+    <button class="remove-btn">Remove Item</button>
+  `;
+
+  document.getElementById("requestForm").appendChild(block);
+
+  block.querySelector(".remove-btn").addEventListener("click", () => {
+    block.remove();
+    itemCount--;
+    validateForm();
+  });
+
+  block.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", validateForm);
+  });
+
+  validateForm();
+}
+
+function validateForm() {
+  const classValue = document.getElementById("classSelect").value;
+  const items = document.querySelectorAll(".item-block");
+
+  if (!classValue) {
+    document.getElementById("submitBtn").disabled = true;
+    return;
+  }
+
+  let valid = true;
+
+  items.forEach(block => {
+    const desc = block.querySelector(".descField").value.trim();
+    const vendor = block.querySelector(".vendorField").value.trim();
+    const url = block.querySelector(".urlField").value.trim();
+    const qty = block.querySelector(".qtyField").value.trim();
+    const price = block.querySelector(".priceField").value.trim();
+
+    if (!desc || !vendor || !url || !qty || !price) {
+      valid = false;
+    }
+  });
+
+  document.getElementById("submitBtn").disabled = !valid;
+}
+
+document.getElementById("submitBtn").addEventListener("click", () => {
+  const classOrg = document.getElementById("classSelect").value;
+  const timestamp = new Date().toLocaleString();
+
+  const blocks = document.querySelectorAll(".item-block");
+
+  let emailBody = `
+FMES Classroom Request
+Class/Organization: ${classOrg}
+Date: ${timestamp}
+
+`;
+
+  let i = 1;
+  blocks.forEach(block => {
+    const desc = block.querySelector(".descField").value;
+    const vendor = block.querySelector(".vendorField").value;
+    const url = block.querySelector(".urlField").value;
+    const qty = block.querySelector(".qtyField").value;
+    const price = block.querySelector(".priceField").value;
+
+emailBody += `
+Item ${i}:
+Request Type: Custom Classroom Request
+Description: ${desc}
+Vendor: ${vendor}
+URL/Link: ${url}
+Quantity: ${qty}
+Price per Item: ${price}
+
+`;
+    i++;
+  });
+
+  emailjs.send("service_4x10wzl", "template_h1n9lyd", {
+    subject: "FMES Classroom Request",
+    message: emailBody
+  }).then(() => {
+    alert("Request submitted!");
+  }).catch(err => {
+    alert("Error sending request.");
+    console.error(err);
+  });
+});
+
+createItemBlock();
+
+document.getElementById("addItemBtn").addEventListener("click", createItemBlock);
+</script>
+
+</body>
+</html>
