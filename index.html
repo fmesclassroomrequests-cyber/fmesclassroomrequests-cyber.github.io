@@ -197,10 +197,11 @@ function createItemBlock() {
 }
 
 function validateForm() {
-  const classValue = document.getElementById("classSelect").value;
+  const categoryValue = document.getElementById("category").value;
+  const requesterName = document.getElementById("requesterName").value.trim();
   const items = document.querySelectorAll(".item-block");
 
-  if (!classValue) {
+  if (!categoryValue || !requesterName) {
     document.getElementById("submitBtn").disabled = true;
     return;
   }
