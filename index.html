@@ -119,9 +119,9 @@
 
 <h2>FMES Classroom Request Form</h2>
 
-<label>Class/Organization</label>
-<select id="classSelect">
-  <option value="" disabled selected hidden>Select Class/Organization</option>
+<label for="category">Category</label>
+<select id="category" required>
+  <option value="" disabled selected>Select Category</option>
   <option>Pre-K</option>
   <option>Kinder</option>
   <option>1st</option>
@@ -129,10 +129,14 @@
   <option>3rd</option>
   <option>4th</option>
   <option>5th</option>
-  <option>Para</option>
-  <option>Speech</option>
-  <option>ESOL</option>
+  <option>Admin</option>
+  <option>ESS</option>
+  <option>GATE</option>
+  <option>Specials</option>
 </select>
+
+<label for="requesterName">Requester Name</label>
+<input type="text" id="requesterName" placeholder="Enter your name" required>
 
 <form id="requestForm" autocomplete="off"></form>
 
@@ -219,6 +223,8 @@ function validateForm() {
 }
 
 document.getElementById("submitBtn").addEventListener("click", () => {
+  const requesterName = document.getElementById("requesterName").value;
+  const category = document.getElementById("category").value;
   const classOrg = document.getElementById("classSelect").value;
   const timestamp = new Date().toLocaleString();
 
@@ -226,9 +232,9 @@ document.getElementById("submitBtn").addEventListener("click", () => {
 
   let emailBody = `
 FMES Classroom Request
-Class/Organization: ${classOrg}
+Category: ${category}
+Requester Name: ${requesterName}
 Date: ${timestamp}
-
 `;
 
   let i = 1;
