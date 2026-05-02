@@ -135,8 +135,8 @@
   <option>Specials</option>
 </select>
 
-<label for="requesterName">Requester Name</label>
-<input type="text" id="requesterName" placeholder="Enter your name" required>
+<label for="StaffMember">Requester Name</label>
+<input type="text" id="StaffMember" placeholder="Enter your name" required>
 
 <form id="requestForm" autocomplete="off"></form>
 
@@ -198,7 +198,7 @@ function createItemBlock() {
 
 function validateForm() {
   const categoryValue = document.getElementById("category").value;
-  const requesterName = document.getElementById("requesterName").value.trim();
+  const requesterName = document.getElementById("StaffMember").value.trim();
   const items = document.querySelectorAll(".item-block");
 
   if (!categoryValue || !requesterName) {
@@ -224,7 +224,7 @@ function validateForm() {
 }
 
 document.getElementById("submitBtn").addEventListener("click", () => {
-  const requesterName = document.getElementById("requesterName").value;
+  const StaffMember = document.getElementById("StaffMember").value;
   const category = document.getElementById("category").value;
   const timestamp = new Date().toLocaleString();
 
@@ -233,7 +233,7 @@ document.getElementById("submitBtn").addEventListener("click", () => {
   let emailBody = `
 FMES Classroom Request
 Category: ${category}
-Requester Name: ${requesterName}
+Staff Member: ${StaffMember}
 Date: ${timestamp}
 `;
 
